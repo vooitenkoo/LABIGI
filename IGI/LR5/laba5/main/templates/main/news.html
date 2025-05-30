@@ -1,0 +1,88 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Новости - Грузоперевозки{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Новости компании</h1>
+
+    <!-- Featured News -->
+    <div class="row mb-5">
+        <div class="col-md-8">
+            <div class="card">
+                <img src="https://news.transinfo.by/uploads/posts/2025-05/1748472868_4.jpg" 
+                     class="card-img-top" alt="Главная новость">
+                <div class="card-body">
+                    <h2 class="card-title">Расширение автопарка компании</h2>
+                    <p class="card-text">Мы рады сообщить о значительном расширении нашего автопарка. В этом месяце мы приобрели 10 новых грузовых автомобилей различной грузоподъемности, что позволит нам еще эффективнее обслуживать наших клиентов.</p>
+                    <p class="text-muted">15 мая 2024</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <img src="https://www.autostat.ru/application/includes/blocks/big_photo/images/cache/000/124/722/59c32876-670-0.jpg" 
+                     class="card-img-top" alt="Новые маршруты">
+                <div class="card-body">
+                    <h5 class="card-title">Открытие новых международных маршрутов</h5>
+                    <p class="card-text">Расширяем географию перевозок - теперь доставляем грузы по новым международным направлениям.</p>
+                    <p class="text-muted">10 мая 2024</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- News Grid -->
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="https://motor-m.kiev.ua/images/header-car.webp" 
+                     class="card-img-top" alt="Обновление автопарка">
+                <div class="card-body">
+                    <h5 class="card-title">Обновление системы отслеживания грузов</h5>
+                    <p class="card-text">Внедрена новая система GPS-мониторинга для более точного отслеживания грузов в пути.</p>
+                    <p class="text-muted">5 мая 2024</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="https://i-logistica.ru/upload/iblock/f91/f916b23424467fbc0c91abd9049e4d9a.jpg" 
+                     class="card-img-top" alt="Новый сервис">
+                <div class="card-body">
+                    <h5 class="card-title">Запуск экспресс-доставки</h5>
+                    <p class="card-text">Теперь доступна услуга срочной доставки грузов в пределах города в течение 3 часов.</p>
+                    <p class="text-muted">1 мая 2024</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="https://biggy.kiev.ua/wp-content/uploads/2021/01/%D0%93%D1%80%D1%83%D0%B7%D0%BE%D0%BF%D0%B5%D1%80%D0%B5%D0%B2%D0%BE%D0%B7%D0%BA%D0%B8-%D0%BD%D0%B5%D0%B4%D0%BE%D1%80%D0%BE%D0%B3%D0%BE.png" 
+                     class="card-img-top" alt="Акция">
+                <div class="card-body">
+                    <h5 class="card-title">Весенние скидки на перевозки</h5>
+                    <p class="card-text">Специальное предложение: скидка 15% на междугородние перевозки весь май.</p>
+                    <p class="text-muted">25 апреля 2024</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1">Предыдущая</a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Следующая</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+{% endblock %} 
