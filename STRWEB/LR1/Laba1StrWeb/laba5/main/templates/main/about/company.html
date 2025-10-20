@@ -1,0 +1,284 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load video_filters %}
+
+{% block title %}О компании - Грузоперевозки{% endblock %}
+
+{% block description %}Информация о нашей компании: история, миссия, ценности и достижения в сфере грузоперевозок.{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container mt-4">
+        <header class="mb-5">
+            <h1>О нашей компании</h1>
+        </header>
+
+        {% if company_info %}
+        <section class="company-overview mb-5">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    {% if company_info.logo %}
+                    <img src="{{ company_info.logo.url }}" class="img-fluid rounded mb-4" alt="Логотип компании">
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <h2>{{ company_info.name }}</h2>
+                    <p class="lead">{{ company_info.description|linebreaks }}</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="company-video mb-5">
+            <h2>Видео о компании</h2>
+            <div class="ratio ratio-16x9">
+                {% if company_info.video_file %}
+                <video id="company-video" controls class="w-100 h-100 rounded" poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCIgdmlld0JveD0iMCAwIDgwMCA0NTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDUwIiBmaWxsPSIjMDA3QkZGIi8+Cjx0ZXh0IHg9IjQwMCIgeT0iMjI1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J+UvzwvdGV4dD4KPC9zdmc+">
+                    <source src="{{ company_info.video_file.url }}" type="video/mp4">
+                    <p>Ваш браузер не поддерживает видео элемент.</p>
+                </video>
+                {% elif company_info.video_url %}
+                <iframe id="company-video" src="{{ company_info.video_url|youtube_embed }}" title="Видео о компании" allowfullscreen frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" onload="handleVideoLoad()" onerror="showVideoFallback()"></iframe>
+                {% else %}
+                <div id="video-fallback" class="d-flex align-items-center justify-content-center bg-light rounded">
+                    <div class="text-center">
+                        <i class="fas fa-video fa-4x text-muted mb-3"></i>
+                        <h4>Видео о компании</h4>
+                        <p class="text-muted">Видео будет добавлено в ближайшее время</p>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-primary" onclick="showVideoPlaceholder()">
+                                <i class="fas fa-play"></i> Посмотреть презентацию
+                            </button>
+                            <button class="btn btn-outline-primary" onclick="showLocalVideo()">
+                                <i class="fas fa-video"></i> Локальное видео
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        {% if company_info.history %}
+        <section class="company-history mb-5">
+            <h2>История компании</h2>
+            <p>{{ company_info.history|linebreaks }}</p>
+        </section>
+        {% endif %}
+
+        {% if company_history %}
+        <section class="timeline mb-5">
+            <h2>История по годам</h2>
+            <div class="timeline">
+                {% for event in company_history %}
+                <div class="timeline-item">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <h4>{{ event.year }}</h4>
+                        <p>{{ event.event|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if company_info.requisites %}
+        <section class="company-requisites mb-5">
+            <h2>Реквизиты компании</h2>
+            <div class="card">
+                <div class="card-body">
+                    <pre class="mb-0">{{ company_info.requisites }}</pre>
+                    <div class="mt-3">
+                        <a href="data:text/plain;charset=utf-8,{{ company_info.requisites|urlencode }}" download="requisites.txt" class="btn btn-outline-primary">
+                            <i class="fas fa-download"></i> Скачать реквизиты
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if company_info.certificate_text %}
+        <section class="certificate mb-5">
+            <h2>Сертификат</h2>
+            <div class="card">
+                <div class="card-body">
+                    <div class="certificate-content">
+                        {{ company_info.certificate_text|linebreaks }}
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        {% else %}
+        <div class="alert alert-info">
+            <h4>Информация о компании</h4>
+            <p>Информация о компании будет добавлена в ближайшее время.</p>
+        </div>
+        {% endif %}
+
+        <!-- Статистика компании -->
+        <section class="company-stats">
+            <h2>Наши достижения</h2>
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                            <h3>1000+</h3>
+                            <p>Довольных клиентов</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-truck fa-3x text-primary mb-3"></i>
+                            <h3>50+</h3>
+                            <p>Единиц техники</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-user-tie fa-3x text-primary mb-3"></i>
+                            <h3>100+</h3>
+                            <p>Профессиональных водителей</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-clock fa-3x text-primary mb-3"></i>
+                            <h3>24/7</h3>
+                            <p>Работаем круглосуточно</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #007bff;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -22px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    background: #007bff;
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 0 3px #007bff;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.certificate-content {
+    font-family: 'Times New Roman', serif;
+    line-height: 1.6;
+    text-align: center;
+}
+</style>
+
+<script>
+function showVideoFallback() {
+    const iframe = document.getElementById('company-video');
+    if (iframe && iframe.style.display !== 'none') {
+        iframe.style.display = 'none';
+        const fallback = document.getElementById('video-fallback');
+        if (!fallback) {
+            const container = iframe.parentElement;
+            container.innerHTML = `
+                <div id="video-fallback" class="d-flex align-items-center justify-content-center bg-light rounded">
+                    <div class="text-center">
+                        <i class="fas fa-exclamation-triangle fa-4x text-warning mb-3"></i>
+                        <h4>Видео недоступно</h4>
+                        <p class="text-muted">Не удалось загрузить видео. Возможно, проблема с интернет-соединением.</p>
+                        <button class="btn btn-primary" onclick="showVideoPlaceholder()">
+                            <i class="fas fa-play"></i> Посмотреть презентацию
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+}
+
+function showVideoPlaceholder() {
+    const container = document.querySelector('.company-video .ratio');
+    container.innerHTML = `
+        <div class="d-flex align-items-center justify-content-center bg-primary text-white rounded">
+            <div class="text-center">
+                <i class="fas fa-truck fa-5x mb-4"></i>
+                <h3>Грузоперевозки</h3>
+                <p class="lead">Надежные перевозки по всей стране</p>
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <i class="fas fa-clock fa-2x mb-2"></i>
+                        <h5>Быстро</h5>
+                        <p>Доставка в срок</p>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="fas fa-shield-alt fa-2x mb-2"></i>
+                        <h5>Надежно</h5>
+                        <p>Страхование груза</p>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="fas fa-dollar-sign fa-2x mb-2"></i>
+                        <h5>Выгодно</h5>
+                        <p>Доступные цены</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function showLocalVideo() {
+    const container = document.querySelector('.company-video .ratio');
+    container.innerHTML = `
+        <video controls class="w-100 h-100 rounded" poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQ1MCIgdmlld0JveD0iMCAwIDgwMCA0NTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNDUwIiBmaWxsPSIjMDA3QkZGIi8+Cjx0ZXh0IHg9IjQwMCIgeT0iMjI1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNDgiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+8J+UvzwvdGV4dD4KPC9zdmc+">
+            <source src="data:video/mp4;base64," type="video/mp4">
+            <p>Ваш браузер не поддерживает видео элемент.</p>
+        </video>
+    `;
+}
+
+function handleVideoLoad() {
+    // Видео успешно загрузилось, ничего не делаем
+    console.log('Видео успешно загружено');
+}
+
+// Убираем автоматическую проверку - пусть видео загружается нормально
+</script>
+{% endblock %}

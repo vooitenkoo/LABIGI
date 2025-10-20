@@ -1,0 +1,131 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Словарь терминов и FAQ - Грузоперевозки{% endblock %}
+
+{% block description %}Словарь терминов и часто задаваемые вопросы по грузоперевозкам. Найдите ответы на ваши вопросы.{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container mt-4">
+        <header class="mb-4">
+            <h1>Словарь терминов и FAQ</h1>
+            <p class="lead">Найдите определения терминов и ответы на часто задаваемые вопросы</p>
+        </header>
+
+        <div class="row">
+            <!-- Словарь терминов -->
+            <div class="col-md-6">
+                <section class="dictionary-section">
+                    <h2><i class="fas fa-book"></i> Словарь терминов</h2>
+                    
+                    {% if dictionary_terms %}
+                    <div class="accordion" id="dictionaryAccordion">
+                        {% for term in dictionary_terms %}
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="heading{{ term.id }}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#collapse{{ term.id }}" aria-expanded="false" 
+                                        aria-controls="collapse{{ term.id }}">
+                                    <strong>{{ term.term }}</strong>
+                                </button>
+                            </h3>
+                            <div id="collapse{{ term.id }}" class="accordion-collapse collapse" 
+                                 aria-labelledby="heading{{ term.id }}" data-bs-parent="#dictionaryAccordion">
+                                <div class="accordion-body">
+                                    <p>{{ term.definition|linebreaks }}</p>
+                                    <small class="text-muted">
+                                        <time datetime="{{ term.created_at|date:'Y-m-d' }}">
+                                            Добавлено: {{ term.created_at|date:"d.m.Y" }}
+                                        </time>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <p>Словарь терминов пока пуст. Термины будут добавлены в ближайшее время.</p>
+                    </div>
+                    {% endif %}
+                </section>
+            </div>
+
+            <!-- FAQ -->
+            <div class="col-md-6">
+                <section class="faq-section">
+                    <h2><i class="fas fa-question-circle"></i> Часто задаваемые вопросы</h2>
+                    
+                    {% if faqs %}
+                    <div class="accordion" id="faqAccordion">
+                        {% for faq in faqs %}
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="faqHeading{{ faq.id }}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#faqCollapse{{ faq.id }}" aria-expanded="false" 
+                                        aria-controls="faqCollapse{{ faq.id }}">
+                                    {{ faq.question }}
+                                </button>
+                            </h3>
+                            <div id="faqCollapse{{ faq.id }}" class="accordion-collapse collapse" 
+                                 aria-labelledby="faqHeading{{ faq.id }}" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <p>{{ faq.answer|linebreaks }}</p>
+                                    <small class="text-muted">
+                                        <time datetime="{{ faq.created_at|date:'Y-m-d' }}">
+                                            Добавлено: {{ faq.created_at|date:"d.m.Y" }}
+                                        </time>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <p>Часто задаваемые вопросы пока не добавлены.</p>
+                    </div>
+                    {% endif %}
+                </section>
+            </div>
+        </div>
+
+        <!-- Дополнительная информация -->
+        <section class="additional-info mt-5">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-phone fa-3x text-primary mb-3"></i>
+                            <h5>Нужна помощь?</h5>
+                            <p>Свяжитесь с нами, если не нашли ответ на свой вопрос</p>
+                            <a href="{% url 'main:contacts' %}" class="btn btn-primary">Связаться</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-comments fa-3x text-primary mb-3"></i>
+                            <h5>Оставить отзыв</h5>
+                            <p>Поделитесь своим опытом работы с нашей компанией</p>
+                            <a href="{% url 'main:reviews' %}" class="btn btn-primary">Отзывы</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center">
+                            <i class="fas fa-info-circle fa-3x text-primary mb-3"></i>
+                            <h5>О компании</h5>
+                            <p>Узнайте больше о нашей компании и услугах</p>
+                            <a href="{% url 'main:about' %}" class="btn btn-primary">Подробнее</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

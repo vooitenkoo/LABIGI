@@ -1,0 +1,212 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Вакансии - Грузоперевозки{% endblock %}
+
+{% block description %}Актуальные вакансии в нашей компании. Присоединяйтесь к команде профессионалов в сфере грузоперевозок.{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container mt-4">
+        <header class="mb-4">
+            <h1>Вакансии</h1>
+            <p class="lead">Присоединяйтесь к нашей команде профессионалов</p>
+        </header>
+
+        <!-- Информация о работе в компании -->
+        <section class="company-benefits mb-5">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                            <h5>Дружная команда</h5>
+                            <p>Работайте в коллективе профессионалов, готовых поддержать и помочь</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                            <h5>Карьерный рост</h5>
+                            <p>Возможности для профессионального развития и карьерного роста</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-gift fa-3x text-primary mb-3"></i>
+                            <h5>Социальный пакет</h5>
+                            <p>Конкурентная зарплата, премии, медицинское страхование</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Список вакансий -->
+        {% if vacancies %}
+        <section class="vacancies mb-5">
+            <h2>Открытые вакансии</h2>
+            <div class="row">
+                {% for vacancy in vacancies %}
+                <div class="col-md-6 mb-4">
+                    <article class="card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <header>
+                                <h5 class="card-title">{{ vacancy.title }}</h5>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="badge bg-primary">{{ vacancy.location }}</span>
+                                    {% if vacancy.salary %}
+                                    <span class="text-success fw-bold">{{ vacancy.salary }}</span>
+                                    {% endif %}
+                                </div>
+                            </header>
+                            
+                            <div class="flex-grow-1">
+                                <p class="card-text">{{ vacancy.description|truncatewords:30 }}</p>
+                                
+                                {% if vacancy.requirements %}
+                                <details class="mb-3">
+                                    <summary class="fw-bold">Требования</summary>
+                                    <p class="mt-2">{{ vacancy.requirements|linebreaks }}</p>
+                                </details>
+                                {% endif %}
+                            </div>
+                            
+                            <footer class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        <time datetime="{{ vacancy.created_at|date:'Y-m-d' }}">
+                                            Опубликовано: {{ vacancy.created_at|date:"d.m.Y" }}
+                                        </time>
+                                    </small>
+                                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#vacancyModal{{ vacancy.id }}">
+                                        Подробнее
+                                    </button>
+                                </div>
+                            </footer>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Модальное окно с подробной информацией -->
+                <div class="modal fade" id="vacancyModal{{ vacancy.id }}" tabindex="-1" aria-labelledby="vacancyModalLabel{{ vacancy.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="vacancyModalLabel{{ vacancy.id }}">{{ vacancy.title }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <strong>Местоположение:</strong> {{ vacancy.location }}
+                                    </div>
+                                    {% if vacancy.salary %}
+                                    <div class="col-md-6">
+                                        <strong>Зарплата:</strong> {{ vacancy.salary }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <h6>Описание</h6>
+                                <p>{{ vacancy.description|linebreaks }}</p>
+                                
+                                {% if vacancy.requirements %}
+                                <h6>Требования</h6>
+                                <p>{{ vacancy.requirements|linebreaks }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                <a href="{% url 'main:contacts' %}" class="btn btn-primary">Откликнуться</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% else %}
+        <section class="no-vacancies mb-5">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle fa-3x mb-3"></i>
+                <h4>В данный момент открытых вакансий нет</h4>
+                <p>Но мы всегда рады талантливым специалистам! Отправьте нам свое резюме, и мы свяжемся с вами при появлении подходящих вакансий.</p>
+                <a href="{% url 'main:contacts' %}" class="btn btn-primary">Отправить резюме</a>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Как подать заявку -->
+        <section class="application-process mb-5">
+            <h2>Как подать заявку</h2>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="fw-bold">1</span>
+                        </div>
+                        <h6>Выберите вакансию</h6>
+                        <p class="small">Изучите описание и требования к должности</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="fw-bold">2</span>
+                        </div>
+                        <h6>Подготовьте резюме</h6>
+                        <p class="small">Укажите опыт работы и ключевые навыки</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="fw-bold">3</span>
+                        </div>
+                        <h6>Свяжитесь с нами</h6>
+                        <p class="small">Отправьте резюме через форму обратной связи</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="fw-bold">4</span>
+                        </div>
+                        <h6>Ждите ответа</h6>
+                        <p class="small">Мы рассмотрим вашу кандидатуру и свяжемся с вами</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Контактная информация для HR -->
+        <section class="hr-contacts">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5>Отдел кадров</h5>
+                    <p>По вопросам трудоустройства обращайтесь к нашим HR-специалистам</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <i class="fas fa-phone text-primary"></i>
+                            <p><a href="tel:+375291234567">+375 (29) 123-45-67</a></p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-envelope text-primary"></i>
+                            <p><a href="mailto:hr@cargo.by">hr@cargo.by</a></p>
+                        </div>
+                        <div class="col-md-4">
+                            <i class="fas fa-clock text-primary"></i>
+                            <p>Пн-Пт: 9:00-18:00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %}

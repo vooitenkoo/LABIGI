@@ -1,0 +1,99 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - Грузоперевозки{% endblock %}
+
+{% block description %}{{ product.description|truncatewords:20 }}{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'main:home' %}">Главная</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'main:products_catalog' %}">Каталог</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="row" itemscope itemtype="https://schema.org/Product">
+            <div class="col-md-6">
+                {% if product.image %}
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="img-fluid rounded" alt="{{ product.name }}" itemprop="image" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDQwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiBmaWxsPSIjRjVGNUY1Ii8+Cjx0ZXh0IHg9IjIwMCIgeT0iMjAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNDgiIGZpbGw9IiM5OTk5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKdpDwvdGV4dD4KPC9zdmc+'">
+                {% endif %}
+                {% else %}
+                <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="fas fa-image fa-3x text-muted"></i>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <header>
+                    <h1 itemprop="name">{{ product.name }}</h1>
+                    <p class="h3 text-primary" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                        <span itemprop="price">{{ product.price }}</span> <span itemprop="priceCurrency" content="RUB">₽</span>
+                    </p>
+                    <span class="badge bg-secondary" itemprop="category">{{ product.category }}</span>
+                </header>
+
+                <section class="mt-4">
+                    <h3>Описание</h3>
+                    <p itemprop="description">{{ product.description|linebreaks }}</p>
+                </section>
+
+                {% if user.is_authenticated %}
+                <section class="mt-4">
+                    <form method="post" action="{% url 'main:add_to_cart' product.id %}">
+                        {% csrf_token %}
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <label for="quantity" class="form-label">Количество:</label>
+                                <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" max="10">
+                            </div>
+                            <div class="col-md-8">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-shopping-cart"></i> Добавить в корзину
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+                {% else %}
+                <div class="alert alert-info mt-4">
+                    <i class="fas fa-info-circle"></i>
+                    Для добавления товара в корзину необходимо <a href="{% url 'main:login' %}">войти в систему</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if related_products %}
+        <section class="mt-5">
+            <h3>Похожие товары</h3>
+            <div class="row">
+                {% for related in related_products %}
+                <div class="col-md-3 mb-4">
+                    <article class="card h-100">
+                        {% if related.image %}
+                        {% if related.image %}
+                        <img src="{{ related.image.url }}" class="card-img-top" alt="{{ related.name }}" style="height: 150px; object-fit: cover;">
+                        {% endif %}
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title">{{ related.name }}</h6>
+                            <p class="card-text flex-grow-1 small">{{ related.description|truncatewords:15 }}</p>
+                            <div class="mt-auto">
+                                <p class="h6 text-primary">{{ related.price }} ₽</p>
+                                <a href="{% url 'main:product_detail' related.id %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

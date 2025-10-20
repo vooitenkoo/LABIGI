@@ -1,0 +1,44 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Заказ оформлен - Грузоперевозки{% endblock %}
+
+{% block description %}Ваш заказ успешно оформлен. Спасибо за покупку!{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <i class="fas fa-check-circle fa-5x text-success"></i>
+                        </div>
+                        <h2 class="card-title text-success">Заказ оформлен!</h2>
+                        <p class="card-text">Ваш заказ успешно принят в обработку.</p>
+                        
+                        <div class="alert alert-info">
+                            <h5>Детали заказа:</h5>
+                            <p><strong>Номер платежа:</strong> #{{ payment.id }}</p>
+                            <p><strong>Сумма:</strong> {{ payment.amount }} ₽</p>
+                            <p><strong>Способ оплаты:</strong> {{ payment.get_payment_method_display }}</p>
+                            <p><strong>Статус:</strong> {{ payment.get_status_display }}</p>
+                            <p><strong>Дата:</strong> {{ payment.created_at|date:"d.m.Y H:i" }}</p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <a href="{% url 'main:products_catalog' %}" class="btn btn-primary">
+                                <i class="fas fa-shopping-bag"></i> Продолжить покупки
+                            </a>
+                            <a href="{% url 'main:home' %}" class="btn btn-outline-secondary">
+                                <i class="fas fa-home"></i> На главную
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

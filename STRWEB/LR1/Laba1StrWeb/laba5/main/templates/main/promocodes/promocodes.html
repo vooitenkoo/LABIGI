@@ -1,0 +1,230 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Промокоды и купоны - Грузоперевозки{% endblock %}
+
+{% block description %}Актуальные промокоды и купоны на скидки. Экономьте на услугах грузоперевозок с нашими специальными предложениями.{% endblock %}
+
+{% block content %}
+<main>
+    <div class="container mt-4">
+        <header class="mb-4">
+            <h1>Промокоды и купоны</h1>
+            <p class="lead">Специальные предложения и скидки для наших клиентов</p>
+        </header>
+
+        <!-- Активные промокоды -->
+        {% if active_promocodes %}
+        <section class="active-promocodes mb-5">
+            <h2><i class="fas fa-tags text-success"></i> Активные промокоды</h2>
+            <div class="row">
+                {% for promocode in active_promocodes %}
+                <div class="col-md-6 mb-4">
+                    <article class="card h-100 border-success">
+                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">{{ promocode.code }}</h5>
+                            <span class="badge bg-light text-success">
+                                {% if promocode.discount_percent > 0 %}
+                                    -{{ promocode.discount_percent }}%
+                                {% else %}
+                                    -{{ promocode.discount_amount }} ₽
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <p class="card-text flex-grow-1">{{ promocode.description }}</p>
+                            
+                            <div class="promocode-details">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <small class="text-muted">Действует до:</small>
+                                        <div class="fw-bold">
+                                            <time datetime="{{ promocode.end_date|date:'Y-m-d' }}">
+                                                {{ promocode.end_date|date:"d.m.Y" }}
+                                            </time>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Использовано:</small>
+                                        <div class="fw-bold">
+                                            {{ promocode.used_count }}/{{ promocode.max_uses|default:"∞" }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <button class="btn btn-success w-100" onclick="copyPromocode('{{ promocode.code }}')">
+                                    <i class="fas fa-copy"></i> Скопировать промокод
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Архивные промокоды -->
+        {% if archived_promocodes %}
+        <section class="archived-promocodes mb-5">
+            <h2><i class="fas fa-archive text-muted"></i> Архив промокодов</h2>
+            <div class="accordion" id="archivedAccordion">
+                <div class="accordion-item">
+                    <h3 class="accordion-header" id="archivedHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#archivedCollapse" aria-expanded="false" 
+                                aria-controls="archivedCollapse">
+                            Показать архивные промокоды
+                        </button>
+                    </h3>
+                    <div id="archivedCollapse" class="accordion-collapse collapse" 
+                         aria-labelledby="archivedHeading" data-bs-parent="#archivedAccordion">
+                        <div class="accordion-body">
+                            <div class="row">
+                                {% for promocode in archived_promocodes %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-secondary">
+                                        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">{{ promocode.code }}</h6>
+                                            <span class="badge bg-light text-secondary">
+                                                {% if promocode.discount_percent > 0 %}
+                                                    -{{ promocode.discount_percent }}%
+                                                {% else %}
+                                                    -{{ promocode.discount_amount }} ₽
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="card-text small">{{ promocode.description }}</p>
+                                            <small class="text-muted">
+                                                Статус: {{ promocode.get_status_display }}<br>
+                                                Действовал до: {{ promocode.end_date|date:"d.m.Y" }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        {% if not active_promocodes and not archived_promocodes %}
+        <section class="no-promocodes mb-5">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-info-circle fa-3x mb-3"></i>
+                <h4>Промокоды пока недоступны</h4>
+                <p>В данный момент нет активных промокодов, но мы регулярно проводим акции и скидки.</p>
+                <p>Следите за обновлениями на нашем сайте!</p>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Как использовать промокоды -->
+        <section class="how-to-use mb-5">
+            <h2>Как использовать промокоды</h2>
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="fw-bold">1</span>
+                        </div>
+                        <h6>Выберите промокод</h6>
+                        <p class="small">Скопируйте код из списка активных промокодов</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="fw-bold">2</span>
+                        </div>
+                        <h6>Оформите заказ</h6>
+                        <p class="small">Добавьте товары в корзину и перейдите к оформлению</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="fw-bold">3</span>
+                        </div>
+                        <h6>Введите промокод</h6>
+                        <p class="small">Вставьте скопированный код в поле "Промокод"</p>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                            <span class="fw-bold">4</span>
+                        </div>
+                        <h6>Получите скидку</h6>
+                        <p class="small">Скидка автоматически применится к вашему заказу</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Условия использования -->
+        <section class="terms mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Условия использования промокодов</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check text-success me-2"></i> Промокоды действуют только в указанный период</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Один промокод можно использовать только один раз</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Промокоды не суммируются с другими скидками</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Компания оставляет за собой право изменить условия акции</li>
+                        <li><i class="fas fa-check text-success me-2"></i> Промокоды не подлежат обмену на денежные средства</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Подписка на уведомления -->
+        <section class="newsletter">
+            <div class="card bg-primary text-white">
+                <div class="card-body text-center">
+                    <h5>Не пропустите новые акции!</h5>
+                    <p>Подпишитесь на уведомления о новых промокодах и специальных предложениях</p>
+                    <form class="row g-3 justify-content-center">
+                        <div class="col-md-4">
+                            <input type="email" class="form-control" placeholder="Ваш email" required>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-light">Подписаться</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<script>
+function copyPromocode(code) {
+    navigator.clipboard.writeText(code).then(function() {
+        // Показываем уведомление об успешном копировании
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
+        button.classList.remove('btn-success');
+        button.classList.add('btn-outline-success');
+        
+        setTimeout(function() {
+            button.innerHTML = originalText;
+            button.classList.remove('btn-outline-success');
+            button.classList.add('btn-success');
+        }, 2000);
+    }).catch(function(err) {
+        console.error('Ошибка копирования: ', err);
+        alert('Не удалось скопировать промокод. Скопируйте вручную: ' + code);
+    });
+}
+</script>
+{% endblock %}
